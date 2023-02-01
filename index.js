@@ -10,6 +10,7 @@ require('./models/User');
 //
 const LoginRoutes = require('./Routes/LoginRoutes');
 const SignupRoutes = require('./Routes/SignupRoutes');
+const requireToken = require('./Middlewares/AuthTokenRequired');
 //
 
 app.use(bodyParser.json());
@@ -18,8 +19,10 @@ app.use(bodyParser.json());
 app.use(SignupRoutes);
 //
 
-app.get('/',(req,res)=> {
-    res.send('This is home page');
+app.get('/',requireToken,(req,res)=> {
+   console.log(req.user);
+   res.send(req.user);
+   //sending to client profile data
 })
 
 

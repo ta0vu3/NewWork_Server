@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 //
 require('dotenv').config();
 
-router.post('/signup',(req,res) =>{
+router.post('/signup',async(req,res) =>{
     //res.send('This is signup page');
     console.log(req.body);
     const {username,first_name,last_name,email,password,confirmPassword,type} = req.body;
@@ -14,6 +14,7 @@ router.post('/signup',(req,res) =>{
         console.log(username+email+first_name+last_name+password+confirmPassword+type);
         return res.status(422).send({error: "Please fill all fields"});
     }
+    
     if (password!=confirmPassword){
         return res.status(422).send({error: "passwords don't match"});
     }
