@@ -1,32 +1,37 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const ContractSchema = new Schema({
     job: {
       type: Schema.Types.ObjectId,
       ref: 'Job',
-      required: true
+      required: true,
     },
     freelancer: {
       type: Schema.Types.ObjectId,
       ref: 'Freelancer',
-      required: true
+      required: true,
     },
     terms: {
       type: String,
-      required: true
+      required: true,
     },
     paymentTerms: {
       type: String,
-      required: true
+      required: true,
     },
     disputeResolution: {
       type: String,
-      required: true
+      required: true,
     },
     createdAt: {
       type: Date,
-      default: Date.now
+      default: Date.now,
     }
   });
 
 const Contract = mongoose.model('Contract', ContractSchema);
 module.exports = Contract;
+
+//const Contract = require('path/to/contract-schema');
+
   

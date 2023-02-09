@@ -32,7 +32,7 @@ require('dotenv').config();
     },
     paymentMethod: {
       type: String,
-      required: true
+      required: true,
       enum: ['Credit Card', 'PayPal']
     },
     createdAt: {
@@ -66,19 +66,35 @@ require('dotenv').config();
   });
   
   const JobSchema = new Schema({
+    status: {
+        type: String,
+        required: true
+        //ongoing or completed
+      },
     title: {
       type: String,
       required: true
     },
+    Bids:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Bid',
+    }],
     description: {
       type: String,
       required: true
     },
-    budget: {
+    hourlyrate: {
       type: Number,
       required: true
     },
-    payment: PaymentSchema,
+    payment:[{ 
+        type: Schema.Types.ObjectId,
+        ref: 'Payment',
+    }],
+    contract:{
+        type: Schema.Types.ObjectId,
+        ref: 'Contract',
+    },
     recruiter: {
       type: Schema.Types.ObjectId,
       ref: 'Recruiter',
@@ -92,6 +108,12 @@ require('dotenv').config();
         type: String,
         required: true
       }],
+    rating:{
+        //this is the rating the recruiter will give to freelancer after job done
+        type: Number,
+        min: 0,
+        max: 5,
+    } , 
     createdAt: {
       type: Date,
       default: Date.now

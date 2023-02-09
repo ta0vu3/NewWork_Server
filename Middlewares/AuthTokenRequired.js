@@ -17,12 +17,15 @@ module.exports = (req,res,next)=>{
         }
         const {_id} = payload;
         User.findById(_id).then(userdata => {
-            console.log(userdata);
+            //console.log(userdata);
             req.user = userdata;
+            //res.redirect(`/profile/${userdata._id}`);
             //getting user data here so get profile data too
             next();
 
         })
+
+ 
     })
    
 }
