@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const User = mongoose.model("User");
+const Freelancer =mongoose.model("Freelancer");
+const Recruiter=mongoose.model("Recruiter");
 const jwt = require("jsonwebtoken");
 //
 require('dotenv').config();
@@ -9,13 +11,13 @@ require('dotenv').config();
 router.post('/signup',async(req,res) =>{
     //res.send('This is signup page');
     console.log(req.body);
-    const {username,first_name,last_name,email,password,confirmPassword,type} = req.body;
-    if (!email || !first_name || !last_name || !password || !type || !username || !confirmPassword){
-        console.log(username+email+first_name+last_name+password+confirmPassword+type);
+    const {username,first_name,last_name,email,password,confirmpassword,type} = req.body;
+    if (!email || !first_name || !last_name || !password || !type || !username || !confirmpassword){
+        console.log(username+email+first_name+last_name+password+confirmpassword+type);
         return res.status(422).send({error: "Please fill all fields"});
     }
     
-    if (password!=confirmPassword){
+    if (password!=confirmpassword){
         return res.status(422).send({error: "passwords don't match"});
     }
 
@@ -43,8 +45,29 @@ router.post('/signup',async(req,res) =>{
                     password,
                     type
                 })
+                
+                // const User_id = user._id;
+                // const freelancer;
+                // const recruiter;
+                // if (type==1){
+                //      freelancer = new Freelancer({
+                //         User_id
+                //     })
+                // }else{
+                //      recruiter = new Recruiter({
+                //         User_id
+                //     })
+
+                // }
+                
                 try{
                     await user.save();
+                    // if (type==1){
+                    //     await freelancer.save();
+                    // }else{
+                    //     await recruiter.save();
+                    // }
+                   
                     const token = jwt.sign({_id: user._id},process.env.jwt_secret);
                     res.send({token});
                     //open profile

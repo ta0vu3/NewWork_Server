@@ -7,16 +7,23 @@ const bodyParser = require('body-parser');
 //
 require('./db');
 require('./models/User');
+require('./models/Freelancer')
+require('./models/Recruiter')
+require('./models/job')
+require('./models/Contract')
 //
 const LoginRoutes = require('./Routes/LoginRoutes');
 const SignupRoutes = require('./Routes/SignupRoutes');
 const requireToken = require('./Middlewares/AuthTokenRequired');
+const FreelancerProfileRoutes = require('./Routes/FreelancerProfileRoutes');
 //
 
 app.use(bodyParser.json());
 app.use(LoginRoutes);
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
 app.use(SignupRoutes);
+app.use(FreelancerProfileRoutes);
+//app.use(FreelancerProfileRoutes);
 //
 
 app.get('/',requireToken,(req,res)=> {

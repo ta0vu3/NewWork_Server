@@ -30,6 +30,7 @@ router.post('/login', async(req,res) =>{
                 console.log("password matched");
                 const token = jwt.sign({_id: savedUser._id}, process.env.jwt_secret);
                 res.send({token});
+                //res.redirect(`/freelancerprofile/${savedUser._id}`);
             }
             else{
                 console.log("passwords incorrect")
@@ -42,7 +43,7 @@ router.post('/login', async(req,res) =>{
         console.log(err);
         }
 
-            
+        //res.redirect(`/Freelancerprofile/${req.userdata._id}`); 
     
 })
 

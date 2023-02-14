@@ -6,28 +6,35 @@ const freelancerSchema = new mongoose.Schema({
         required: true
 
     },
+    My_image: {
+        type: Buffer,
+        //required: true
+      },
+    bio: {
+        type: String
+      },
     skills: [{
         type: String
       }],
       projects: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Project'
+        ref: 'Job'
       }],
       rating: {
         type: Number,
+        min: 0,
+        max: 5,
         default: 0
       },
       hourlyRate: {
         type: Number,
-        required: true
+        default: 0
+        //required: true
       },
-      createdAt: {
-        type: Date,
-        default: Date.now
-      }
+      
     
 });
 
-const Freelancer = mongoose.model('Freelancer', freelancerSchema);
+ mongoose.model('Freelancer', freelancerSchema);
 
-module.exports = Freelancer;
+
