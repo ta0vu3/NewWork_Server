@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const User = mongoose.model("User");
+const Freelancer = mongoose.model("Freelancer");
+const Recruiter =mongoose.model("Recruiter");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 //
@@ -17,6 +19,9 @@ router.post('/login', async(req,res) =>{
         
     }
     const savedUser = await User.findOne({ email : email});
+   //const freelancer = await Freelancer.findOne({ user: savedUser});
+    //const recruiter = await Recruiter.findOne({ user: savedUser});
+
 
     if (!savedUser){
                     
@@ -29,7 +34,10 @@ router.post('/login', async(req,res) =>{
 
                 console.log("password matched");
                 const token = jwt.sign({_id: savedUser._id}, process.env.jwt_secret);
-                res.send({token});
+                //res.send({token});
+                const { _id, username, email, type ,first_name,last_name} = savedUser;
+            
+                res.json({ message: "Login Successful", token, user: { _id, username, email,type ,first_name,last_name} });
                 //res.redirect(`/freelancerprofile/${savedUser._id}`);
             }
             else{
