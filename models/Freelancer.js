@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const User = require('./User');
+
 const freelancerSchema = new mongoose.Schema({
-    User_id :{
-        type:mongoose.Schema.Types.ObjectId,
+    user :{
+        //type:mongoose.Schema.Types.ObjectId,
+        type:User,
         required: true
 
     },

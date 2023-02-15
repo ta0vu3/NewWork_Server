@@ -45,38 +45,53 @@ router.post('/signup',async(req,res) =>{
                     password,
                     type
                 })
-                
-                // const User_id = user._id;
-                // const freelancer;
-                // const recruiter;
-                // if (type==1){
-                //      freelancer = new Freelancer({
-                //         User_id
-                //     })
-                // }else{
-                //      recruiter = new Recruiter({
-                //         User_id
-                //     })
-
-                // }
-                
-                try{
-                    await user.save();
-                    // if (type==1){
-                    //     await freelancer.save();
-                    // }else{
-                    //     await recruiter.save();
-                    // }
-                   
-                    const token = jwt.sign({_id: user._id},process.env.jwt_secret);
-                    res.send({token});
-                    //open profile
+                if(type==1){
+                    const freelancer=new Freelancer({
+                        User
+                    })
+                    try{
+                        await user.save();
+                        await freelancer.save();
+                        const token = jwt.sign({_id: user._id},process.env.jwt_secret);
+                        res.send({token});
+                        //open profile
+    
+                    }
+                     catch (err) {
+                           console.log('db error',err);
+                           return res.status(422).send({error : err.message});
+                        }
 
                 }
-                 catch (err) {
-                       console.log('db error',err);
-                       return res.status(422).send({error : err.message});
+                else{
+                     const recruiter= new Recruiter({
+                         user
+                     })
+                     try{
+                        await user.save();
+                        await recruiter.save();
+                        const token = jwt.sign({_id: user._id},process.env.jwt_secret);
+                        res.send({token});
+                        //open profile
+    
                     }
+                     catch (err) {
+                           console.log('db error',err);
+                           return res.status(422).send({error : err.message});
+                        }
+                }
+                
+                // try{
+                //     await user.save();
+                //     const token = jwt.sign({_id: user._id},process.env.jwt_secret);
+                //     res.send({token});
+                //     //open profile
+
+                // }
+                //  catch (err) {
+                //        console.log('db error',err);
+                //        return res.status(422).send({error : err.message});
+                //     }
 
                 
             }

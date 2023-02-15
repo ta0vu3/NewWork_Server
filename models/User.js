@@ -30,8 +30,12 @@ const userSchema = new mongoose.Schema({
         // 1 for freelancer and 2 for recruiter
         type: Number,
         required: true
-    }
-})
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+      }
+});
 
 userSchema.pre('save',async function(next){
     const user=this;

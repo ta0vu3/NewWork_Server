@@ -2,8 +2,40 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const crypto = require('crypto');
+
 require('dotenv').config();
-  
+const ContractSchema = new Schema({
+    job: {
+      type: Schema.Types.ObjectId,
+      ref: 'Job',
+      required: true,
+    },
+    freelancer: {
+      type: Schema.Types.ObjectId,
+      ref: 'Freelancer',
+      required: true,
+    },
+    terms: {
+      type: String,
+      required: true,
+    },
+    paymentTerms: {
+      type: String,
+      required: true,
+    },
+    disputeResolution: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    }
+  });
+
+
+
+
   const PaymentSchema = new Schema({
     job: {
         type: Schema.Types.ObjectId,
@@ -68,7 +100,8 @@ require('dotenv').config();
   const JobSchema = new Schema({
     status: {
         type: String,
-        required: true
+        required: true,
+        default:"ongoing"
         //ongoing or completed
       },
     title: {
@@ -76,7 +109,8 @@ require('dotenv').config();
       required: true
     },
     Bids:[{
-        type: Schema.Types.ObjectId,
+        //type: Schema.Types.ObjectId,
+        type: BidSchema,
         ref: 'Bid',
     }],
     description: {
@@ -88,11 +122,13 @@ require('dotenv').config();
       required: true
     },
     payment:[{ 
-        type: Schema.Types.ObjectId,
-        ref: 'Payment',
+        //type: Schema.Types.ObjectId,
+        type: PaymentSchema,
+        ref: 'payment',
     }],
     contract:{
-        type: Schema.Types.ObjectId,
+        //type: Schema.Types.ObjectId,
+        type: ContractSchema,
         ref: 'Contract',
     },
     recruiter: {
@@ -153,11 +189,13 @@ PaymentSchema.pre('save', async function(next) {
 const Payment = mongoose.model('Payment', PaymentSchema);
 const Job = mongoose.model('Job', JobSchema);
 const Bid = mongoose.model('Bid', BidSchema);
+const Contract = mongoose.model('Contract', ContractSchema);
 
 module.exports = {
     Payment,
     Job,
-    Bid
+    Bid,
+    Contract,
 };
 
 //to export const { Payment, Job, Bid } = require('./models');

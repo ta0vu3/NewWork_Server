@@ -19,7 +19,7 @@ module.exports = (req,res,next)=>{
         User.findById(_id).then(userdata => {
             //console.log(userdata);
             req.user = userdata;
-            //res.redirect(`/profile/${userdata._id}`);
+            //res.redirect(`/Freelancerprofile/${userdata._id}`);
             //getting user data here so get profile data too
             next();
 
@@ -27,5 +27,7 @@ module.exports = (req,res,next)=>{
 
  
     })
+
+
    
 }

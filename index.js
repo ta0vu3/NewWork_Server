@@ -10,12 +10,12 @@ require('./models/User');
 require('./models/Freelancer')
 require('./models/Recruiter')
 require('./models/job')
-require('./models/Contract')
+
 //
 const LoginRoutes = require('./Routes/LoginRoutes');
 const SignupRoutes = require('./Routes/SignupRoutes');
 const requireToken = require('./Middlewares/AuthTokenRequired');
-const FreelancerProfileRoutes = require('./Routes/FreelancerProfileRoutes');
+const FreelancerProfileRoutes = require('./Routes/ProfileRoutes');
 //
 
 app.use(bodyParser.json());
