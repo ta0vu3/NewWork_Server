@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const User = mongoose.model("User");
 const Freelancer =mongoose.model("Freelancer");
+//const Recruiter = mongoose.model("Recruiter");
 const jwt = require("jsonwebtoken");
 
 //
@@ -14,8 +15,6 @@ router.post('/freelancerprofile',async(req,res) =>{
     const User_id = await User.findById({ email : email});
     const savedUser = await User.findOne({ email : email});
     const freelancer = await Freelancer.findOne({User_id: User_id});
-
-    
-
+    //const recruiter = await Recruiter.findOne({User_id: User_id});
 })
 module.exports = router;

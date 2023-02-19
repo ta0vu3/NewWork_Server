@@ -15,7 +15,7 @@ router.post('/login', async(req,res) =>{
     console.log(password)
     console.log(email)
     if (!email || !password){
-        return res.status(422).send({error: "Please fill all fields"});
+        return res.status(422).send({error: "Please fill in all fields"});
         
     }
     const savedUser = await User.findOne({ email : email});
