@@ -3,15 +3,16 @@ const Schema = mongoose.Schema;
 const User = require('./User');
 
 const freelancerSchema = new mongoose.Schema({
-    user :{
-        //type:mongoose.Schema.Types.ObjectId,
-        type:User,
+    user_id :{
+        type: mongoose.Schema.Types.ObjectId,
+        //type:User,
         required: true
 
     },
     My_image: {
-        type: Buffer,
+        type: String,
         //required: true
+        default:"https://www.google.com/search?q=recruiter+avatar&rlz=1C5CHFA_enUS976US980&sxsrf=AJOqlzVAVZtZqxGPDBE_Il7ud5cXMiKiWA:1676625723452&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjMq6vFnZz9AhVpk4kEHdxyBuYQ_AUoAXoECAIQAw&biw=1112&bih=739&dpr=2#imgrc=riHOB7r3SE-TnM&imgdii=QlZv5SIL-Kb2HM"
       },
     bio: {
         type: String

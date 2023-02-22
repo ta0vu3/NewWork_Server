@@ -12,7 +12,7 @@ router.post('/signup',async(req,res) =>{
     //res.send('This is signup page');
     console.log(req.body);
     const {username,first_name,last_name,email,password,confirmpassword,type} = req.body;
-    if (!email || !first_name || !last_name || !password || !type || !username || !confirmpassword){
+    if (!email || !last_name || !password || !type || !username || !confirmpassword){
         console.log(username+email+first_name+last_name+password+confirmpassword+type);
         return res.status(422).send({error: "Please fill all fields"});
     }
@@ -20,23 +20,17 @@ router.post('/signup',async(req,res) =>{
     if (password!=confirmpassword){
         return res.status(422).send({error: "passwords don't match"});
     }
+    U1=await User.findOne({ username : username});
+    U2=await  User.findOne({ email : email });
+    if(U1){
+        return res.status(422).send({error: "Username already exists"});
+    }
+    else if(U2){
+        return res.status(422).send({error: "An account is already registered through this email"});
+           
+    }
 
-    User.findOne({ username : username})
-        .then(
-            async (savedUser) => {
-                if(savedUser){
-                    return res.status(422).send({error: "Username already exists"});
-                }
-            }
-        )
-    
-         
-    User.findOne({ email : email })
-        .then(
-            async (savedUser) => {
-                if (savedUser) {
-                    return res.status(422).send({error: "An account is already registered through this email"});
-                }
+                else{ 
                 const user = new User({
                     username,
                     first_name,
@@ -45,15 +39,22 @@ router.post('/signup',async(req,res) =>{
                     password,
                     type
                 })
+                await user.save();
+                //user=await User.findOne({ email : email });
+                user_id=user._id;
                 if(type==1){
                     const freelancer=new Freelancer({
-                        User
+                        user_id
                     })
                     try{
-                        await user.save();
+                        
                         await freelancer.save();
                         const token = jwt.sign({_id: user._id},process.env.jwt_secret);
-                        res.send({token});
+                        res.send({
+                            token,
+                            user,
+                            freelancer,
+                        });
                         //open profile
     
                     }
@@ -65,13 +66,13 @@ router.post('/signup',async(req,res) =>{
                 }
                 else{
                      const recruiter= new Recruiter({
-                         user
+                         user_id
                      })
                      try{
-                        await user.save();
+                        //await user.save();
                         await recruiter.save();
                         const token = jwt.sign({_id: user._id},process.env.jwt_secret);
-                        res.send({token});
+                        res.send({token,user,recruiter});
                         //open profile
     
                     }
@@ -80,23 +81,13 @@ router.post('/signup',async(req,res) =>{
                            return res.status(422).send({error : err.message});
                         }
                 }
-                
-                // try{
-                //     await user.save();
-                //     const token = jwt.sign({_id: user._id},process.env.jwt_secret);
-                //     res.send({token});
-                //     //open profile
-
-                // }
-                //  catch (err) {
-                //        console.log('db error',err);
-                //        return res.status(422).send({error : err.message});
-                //     }
-
-                
             }
-        )
+            // }
+            // )
+        
+              
 
+               
 
 
 
