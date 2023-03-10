@@ -15,14 +15,17 @@ require('./models/job')
 const LoginRoutes = require('./Routes/LoginRoutes');
 const SignupRoutes = require('./Routes/SignupRoutes');
 const requireToken = require('./Middlewares/AuthTokenRequired');
-const FreelancerProfileRoutes = require('./Routes/ProfileRoutes');
+const ProfileRoutes = require('./Routes/ProfileRoutes');
+const RecruiterRoutes = require('./Routes/RecruiterRoutes')
+
 //
 
 app.use(bodyParser.json());
 app.use(LoginRoutes);
 //app.use(bodyParser.json());
 app.use(SignupRoutes);
-app.use(FreelancerProfileRoutes);
+app.use(ProfileRoutes);
+app.use(RecruiterRoutes);
 //app.use(FreelancerProfileRoutes);
 //
 

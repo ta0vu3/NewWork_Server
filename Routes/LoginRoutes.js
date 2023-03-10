@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 require('dotenv').config();
 const nodemailer = require("nodemailer");
 //
-require('dotenv').config();
+//require('dotenv').config();
 
 router.post('/login', async(req,res) =>{
     console.log(req.body);
