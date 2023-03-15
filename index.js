@@ -16,8 +16,8 @@ const LoginRoutes = require('./Routes/LoginRoutes');
 const SignupRoutes = require('./Routes/SignupRoutes');
 const requireToken = require('./Middlewares/AuthTokenRequired');
 const ProfileRoutes = require('./Routes/ProfileRoutes');
-const RecruiterRoutes = require('./Routes/RecruiterRoutes')
-
+const RecruiterRoutes = require('./Routes/RecruiterRoutes');
+const FreelancerRoutes =require('./Routes/FreelancerRoutes');
 //
 
 app.use(bodyParser.json());
@@ -26,6 +26,7 @@ app.use(LoginRoutes);
 app.use(SignupRoutes);
 app.use(ProfileRoutes);
 app.use(RecruiterRoutes);
+app.use(FreelancerRoutes);
 //app.use(FreelancerProfileRoutes);
 //
 
