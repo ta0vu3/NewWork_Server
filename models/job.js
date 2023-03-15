@@ -109,8 +109,9 @@ const ContractSchema = new Schema({
       required: true
     },
     Bids:[{
-       // type: Schema.Types.ObjectId,
-        type: BidSchema,
+        type: Schema.Types.ObjectId,
+        //type: BidSchema,
+        default:[],
         ref: 'Bid',
     }],
     description: {
@@ -122,13 +123,13 @@ const ContractSchema = new Schema({
       required: true
     },
     payment:[{ 
-        //type: Schema.Types.ObjectId,
-        type: PaymentSchema,
+        type: Schema.Types.ObjectId,
+        //type: PaymentSchema,
         ref: 'payment',
     }],
     contract:{
-        //type: Schema.Types.ObjectId,
-        type: ContractSchema,
+        type: Schema.Types.ObjectId,
+        //type: ContractSchema,
         ref: 'Contract',
     },
     recruiter: {
