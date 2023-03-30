@@ -25,13 +25,14 @@ router.post('/PostBid', async(req,res) =>{
         })
         try{
         await bid.save();
-        const Updatejob= await Job.findByIdAndUpdate(
-            {$push:{'Bids':bid._id}},
-            { new: true } 
-           );
+        const updatedjob = await Job.findByIdAndUpdate(
+            job,
+            { $push: { Bids: bid._id } },
+            { new: true }
+        );
         res.send({
             message:"Posted Bid sucessfully",
-            Updatejob,
+            updatedjob,
         });
 
         } catch (err) {
