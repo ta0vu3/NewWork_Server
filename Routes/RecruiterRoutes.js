@@ -13,58 +13,6 @@ const bcrypt = require("bcrypt");
 require('dotenv').config();
 
 
-// router.post('/PostJob', async(req,res) =>{
-//    console.log("inside post job");
-//    const{_id,user_id,skills,description,title,hourlyrate}=req.body;
-//     if(!_id ){
-//         return res.status(422).send({error: "did not get complete data"});
-//     }
-//     else if(!skills || !description || !title || !hourlyrate){
-//         return res.status(422).send({error: "Kindly fill all fields"});
-//     }
-//     else{
-//      var recruiter=_id;
-//         const job= new Job({
-//             recruiter,
-//             skills,
-//             description,
-//             title,
-//             hourlyrate,
-//         })
-//         try{
-//            //await user.save();
-//            await job.save();
-//            //const token = jwt.sign({_id: user._id},process.env.jwt_secret);
-//            const recruiter= await Recruiter.findByIdAndUpdate(
-//             {'_id':_id},
-//             {$push:{'projects':job._id}},
-//             { new: true } 
-//            );
-//            const message ="Job Posted Sucessfully"
-           
-//            //res.send({message,job,recruiter});
-//            //open profile
-//         const projectIds = recruiter.projects;
-//         const  jobs= Job.find({ "_id": { $in: projectIds },"status":"ongoing"}).populate('Bids');
-          
-//     if (!jobs) {
-//         return res.status(404).send({error: "No jobs found"});
-//       } 
-//     else {
-    
-//     return res.status(200).send({message,recruiter, jobs });
-//      }
-
-//        }
-//         catch (err) {
-//               console.log('db error',err);
-//               return res.status(422).send({error : err.message});
-//            }
-       
-
-//     }
-  
-// })
 
 router.post('/PostJob', async (req, res) => {
     console.log("inside post job");
@@ -116,7 +64,7 @@ else{
    .then(foundRecruiter => {
     recruiter = foundRecruiter; 
     const projectIds = recruiter.projects;
-    return Job.find({ "_id": { $in: projectIds },"status":"ongoing"}).populate('Bids');})
+    return Job.find({ "_id": { $in: projectIds }}).populate('Bids');})
   .then(jobs => {
     if (!jobs) {
         return res.status(404).send({error: "No jobs found"});
@@ -138,34 +86,78 @@ else{
 })
 
 
+// router.delete('/:recruiterId/DELETEJOB/:jobId', async (req, res) => {
+//     console.log("deleting job");
+//     const jobId = req.params.jobId;
+//     const _id=req.params.recruiterId;
+//     console.log(jobId)
+//     console.log(_id)
+//     try {
+//          // Delete the job from Recruiter collection
+//       const recruiter = await Recruiter.findOne({ _id: _id});
+//       //console.log(recruiter);
+//       if (!recruiter) {
+//         return res.status(404).json({ error: 'Recruiter not found' });
+//       }
+//       recruiter.projects = recruiter.projects.filter(projectId => projectId.toString() !== jobId);
+//       await recruiter.save();
+//       // Delete the job from Job collection
+//       // Delete the bids for this job
+//       await Bid.deleteMany({ job: jobId });
+//       const deletedJob = await Job.findByIdAndDelete(jobId);
+//       if (!deletedJob) {
+//         return res.status(404).json({ error: 'Job not found' });
+//       }
+//       console.log(deletedJob);
+//       res.status(200).json({ message: 'Job deleted successfully' });
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).json({ error: 'Server error' });
+//     }
+//   });
 router.delete('/:recruiterId/DELETEJOB/:jobId', async (req, res) => {
-    console.log("deleting job");
-    const jobId = req.params.jobId;
-    const _id=req.params.recruiterId;
-    console.log(jobId)
-    console.log(_id)
-    try {
-         // Delete the job from Recruiter collection
-      const recruiter = await Recruiter.findOne({ _id: _id});
-      //console.log(recruiter);
-      if (!recruiter) {
-        return res.status(404).json({ error: 'Recruiter not found' });
-      }
-      recruiter.projects = recruiter.projects.filter(projectId => projectId.toString() !== jobId);
-      await recruiter.save();
-      // Delete the job from Job collection
-      const deletedJob = await Job.findByIdAndDelete(jobId);
-      if (!deletedJob) {
-        return res.status(404).json({ error: 'Job not found' });
-      }
-      console.log(deletedJob);
-      res.status(200).json({ message: 'Job deleted successfully' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Server error' });
+        console.log("deleting job");
+        const jobId = req.params.jobId;
+        const _id=req.params.recruiterId;
+        console.log(jobId)
+        console.log(_id)
+try {
+    const deletedJob = await Job.findById(jobId);
+    if (!deletedJob) {
+      return res.status(404).json({ error: 'Job not found' });
     }
-  });
   
+    if (deletedJob.status === 'ongoing' && deletedJob.freelancer) {
+      return res.status(400).json({ error: 'Job cannot be deleted as it is ongoing and has a freelancer' });
+    }
+  
+    const freelancer = await Freelancer.findOne({ _id: deletedJob.freelancer });
+    if (freelancer) {
+      freelancer.projects = freelancer.projects.filter(projectId => projectId.toString() !== jobId);
+      await freelancer.save();
+    }
+  
+    // Delete the job from Recruiter collection
+    const recruiter = await Recruiter.findOne({ _id: _id });
+    if (!recruiter) {
+      return res.status(404).json({ error: 'Recruiter not found' });
+    }
+    recruiter.projects = recruiter.projects.filter(projectId => projectId.toString() !== jobId);
+    await recruiter.save();
+  
+    // Delete the job from Job collection
+    // Delete the bids for this job
+    await Bid.deleteMany({ job: jobId });
+    await Job.findByIdAndDelete(jobId);
+  
+    res.status(200).json({ message: 'Job deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+  
+
 
   router.put('/:recruiterId/EDITJOB/:jobId', async (req, res) => {
     console.log("inside edit job")
@@ -241,7 +233,8 @@ router.post('/GetActiveJOBSsRecruiter', async (req, res) => {
     //also add check if freelancer exists
       const jobs = await Job.find({
         recruiter: _id,
-        status: 'hired',
+        status: 'ongoing',
+        freelancer: { $exists: true },
         
       });
       res.status(200).json({ message: 'Active jobs Found',jobs });
@@ -309,26 +302,8 @@ router.post('/GetActiveJOBSsRecruiter', async (req, res) => {
     }
 });
 
-// router.get('/GETALLJOBS', async (req, res) => {
-//     try {
-//       // find all jobs with these conditions
-//       const jobs = await Job.find({
-//         status: 'ongoing',
-//         freelancer: { $eq: null }
-//       });
-//       // get usernames of recruiters associated with jobs
-//     const recruiterIds = jobs.map(job => job.recruiter);
-//     const recruiters = await Recruiter.find({ _id: { $in: recruiterIds }});
-//     const userIds = recruiters.map(recruiter => recruiter.user_id);
-//     const usernames = await User.find({ _id: { $in: userIds }}, 'username');
-//      console.log(jobs);
-//      console.log(usernames);
-//       res.json({message:'Sending Jobs',jobs,usernames}); // return jobs as JSON
-//     } catch (err) {
-//       console.error(err);
-//       res.status(500).json({ error: 'Error fetching jobs' });
-//     }
-//   });
+
+
 router.get('/GETALLJOBS', async (req, res) => {
     try {
       // find all jobs with these conditions
@@ -359,40 +334,55 @@ router.get('/GETALLJOBS', async (req, res) => {
   
 
   
-router.post('/acceptBid', async (req, res) => {
-    //gets bid _id,job _id,
-    //create Contract with bid amount.
+  router.post('/acceptBid', async (req, res) => {
     try {
-        const { bidId, jobId } = req.body;
-    
-        // Find the bid
-        const bid = await Bid.findById(bidId);
-        if (!bid) {
-          return res.status(404).json({ message: 'Bid not found' });
-        }
-    
-        // Create the contract
-        const contract = new Contract({
-          job: jobId,
-          freelancer: bid.freelancer,
-          amount: bid.amount
-        });
-        await contract.save();
-    
-        // Update the job to mark it as closed and set the freelancer
-        const job = await Job.findByIdAndUpdate(jobId, { $set: { status: "hired", freelancer: bid.freelancer,contract: contract._id } });
-        if (!job) {
-          return res.status(404).json({ message: 'Job not found' });
-        }
-    
-        // Return the updated job
-        res.json({message:"Bid accepted sucessfully", job,contract,bid });
-      } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ message: 'Server error' });
+      console.log("inside accept bid");
+      const { bidId, jobId } = req.body;
+      console.log(bidId);
+      console.log(jobId);
+      // Find the bid
+      const bid = await Bid.findById(bidId);
+      if (!bid) {
+        return res.status(404).json({ message: 'Bid not found' });
       }
-
-})
+    
+      // Check if the job already has a freelancer
+      const job = await Job.findById(jobId);
+      if (job.freelancer) {
+        return res.status(400).json({ message: 'Job already has a freelancer' });
+      }
+  
+      // Create the contract
+      const contract = new Contract({
+        job: jobId,
+        freelancer: bid.freelancer,
+        amount: bid.amount
+      });
+      await contract.save();
+    
+      // Update the job to mark it as closed and set the freelancer
+      const updatedJob = await Job.findByIdAndUpdate(
+        jobId, 
+        { $set: { freelancer: bid.freelancer, contract: contract._id } },
+        { new: true }
+      );
+      if (!updatedJob) {
+        return res.status(404).json({ message: 'Job not found' });
+      }
+      const updatedFreelancer = await Freelancer.findOneAndUpdate(
+        { _id: bid.freelancer },
+        { $push: { projects: jobId } },
+        { new: true }
+      );
+      // Return the updated job
+      console.log(updatedJob);
+      res.json({ message: "Bid accepted successfully", job: updatedJob, contract, bid });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ message: 'Server error' });
+    }
+  })
+  
 
   
 
