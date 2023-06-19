@@ -15,16 +15,18 @@ const ContractSchema = new Schema({
       ref: 'Freelancer',
       required: true,
     },
-    terms: {
-      type: String,
-      required: true,
+    amount: {
+        type: Number,
+        required: true,
     },
     paymentTerms: {
       type: String,
+      default:"Payemnts is mandtory for each job.if payment is not made after job completed we will intervine",
       required: true,
     },
     disputeResolution: {
       type: String,
+      default:"Worknow will intervine if payment issues or work violations made.if both parties are not happy with our method they can sue eachother.",
       required: true,
     },
     createdAt: {
@@ -42,6 +44,14 @@ const ContractSchema = new Schema({
         ref: 'Job',
         required: true
       },
+    usernameF:{
+        type: String,
+        required: true,
+    }, 
+    usernameR:{
+        type: String,
+        required: true,
+    },  
     amount: {
       type: Number,
       required: true
@@ -61,6 +71,7 @@ const ContractSchema = new Schema({
     status: {
       type: String,
       required: true
+      //pending,sent
     },
     paymentMethod: {
       type: String,
@@ -102,7 +113,7 @@ const ContractSchema = new Schema({
         type: String,
         required: true,
         default:"ongoing"
-        //ongoing or completed
+        //ongoing or completed or hired
       },
     title: {
       type: String,

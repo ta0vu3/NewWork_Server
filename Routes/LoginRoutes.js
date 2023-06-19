@@ -100,7 +100,7 @@ async function mailer(recieveremail, code) {
     console.log("Message sent: %s", info.messageId);
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 }
-router.post('/verify', (req, res) => {
+router.post('/verify-email', (req, res) => {
     console.log('sent by client', req.body);
     const { email } = req.body;
 
@@ -109,7 +109,7 @@ router.post('/verify', (req, res) => {
     }
 
     User.findOne({ email: email }).then(async (savedUser) => {
-        if (savedUser) {
+        if (!savedUser) {
             return res.status(422).json({ error: "Invalid Credentials" });
         }
         try {
@@ -124,5 +124,33 @@ router.post('/verify', (req, res) => {
     }
     )
 })
+
+
+router.put('/setNewPassword', async (req, res) => {
+    const { email, newPassword } = req.body;
+
+    try {
+      // Find the user with the same email from the User schema
+      let user = await User.findOne({ email : email});
+  
+      if (!user) {
+        // If no user is found with the same email, return an error response
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Update the user's password
+      user.password = newPassword;
+  
+      // Save the updated user to the database
+      await user.save();
+  
+      // Return a success response
+      res.status(200).json({ message: 'Password updated successfully' });
+    } catch (err) {
+      // If there is an error, return an error response
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
 module.exports = router;

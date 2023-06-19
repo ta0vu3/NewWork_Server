@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const User = require('./User');
+const crypto = require('crypto');
 
 const freelancerSchema = new mongoose.Schema({
     user_id :{
@@ -35,10 +36,40 @@ const freelancerSchema = new mongoose.Schema({
         default: 0
         //required: true
       },
-      
+      //addcarddetails in here
+      cardDetails: {
+        cardNumber: {
+            type: String,
+            //required: true,
+            set: (plaintext) => encrypt(plaintext, process.env.jwt_secret)
+        },
+        expirationDate: {
+            type: String,
+            //required: true,
+            set: (plaintext) => encrypt(plaintext, process.env.jwt_secret)
+        },
+        cvv: {
+            type: String,
+           // required: true,
+            set: (plaintext) => encrypt(plaintext, process.env.jwt_secret)
+        }
+    }
     
 });
-
+// Function to encrypt card information
+function encrypt(plaintext, password) {
+    const cipher = crypto.createCipher('aes-256-cbc', password);
+    let encrypted = cipher.update(plaintext, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+}
+// Function to decrypt payment information
+function decrypt(encrypted, password) {
+    const decipher = crypto.createDecipher('aes-256-cbc', password);
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+}
  mongoose.model('Freelancer', freelancerSchema);
 
 

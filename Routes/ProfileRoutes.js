@@ -178,6 +178,46 @@ router.post('/Addhourlyrateandbio',async(req,res) =>{
 
 })
 
+
+
+router.post('/UpdateFreelancerCardDetails',async(req,res) =>{
+    const{_id,cardNumber,expirationdate,cvv}=req.body;
+    const cardDetails = {
+       cardNumber,
+       expirationDate:expirationdate,
+       cvv,
+      };
+    if(!cardDetails.cardNumber || !cardDetails.expirationDate || !cardDetails.cvv || !_id) {
+        console.log(cardDetails);
+        return res.status(422).send({error: "Please fill all fields"});
+    }
+
+    const freelancer= await Freelancer.findByIdAndUpdate(
+        {'_id':_id},
+        { $set: { cardDetails: cardDetails } },
+        { new: true }
+    );
+   if(freelancer){
+    res.status(200).send({
+        message: "freelancer updated",
+        freelancer,
+    });
+
+   }else{
+    return res.status(422).json({ error: "problem with update"});
+   }
+   
+
+})
+
+
+
+
+
+
+
+
+
 router.post('/GetrecruiterProfileData',async(req,res)=>{
     const{_id,user_id}=req.body;
     if(!_id || !user_id){
